@@ -1,0 +1,118 @@
+{
+  "info": {
+    "name": "Fingerprint Electronic Voting System",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:3000" },
+    { "key": "adminToken", "value": "" },
+    { "key": "electionId", "value": "" },
+    { "key": "votingSessionToken", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "1. Admin Login",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": "{{baseUrl}}/api/admin/login",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"username\": \"admin\",\n  \"password\": \"admin-password\"\n}"
+        }
+      }
+    },
+    {
+      "name": "2. Register Voter",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Authorization", "value": "Bearer {{adminToken}}" }
+        ],
+        "url": "{{baseUrl}}/api/voters",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"voterId\": \"V001\",\n  \"name\": \"Jane Doe\",\n  \"fingerprintId\": 1,\n  \"deviceId\": \"device-esp32-01\"\n}"
+        }
+      }
+    },
+    {
+      "name": "3. Create Election",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Authorization", "value": "Bearer {{adminToken}}" }
+        ],
+        "url": "{{baseUrl}}/api/elections",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"title\": \"Presidential Election 2026\",\n  \"candidates\": [\n    { \"name\": \"Candidate A\" },\n    { \"name\": \"Candidate B\" },\n    { \"name\": \"Candidate C\" }\n  ]\n}"
+        }
+      }
+    },
+    {
+      "name": "4A. Add Eligible Voters",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Authorization", "value": "Bearer {{adminToken}}" }
+        ],
+        "url": "{{baseUrl}}/api/elections/{{electionId}}/eligibility",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"voterIds\": [\"V001\"]\n}"
+        }
+      }
+    },
+    {
+      "name": "4B. Activate Election",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Authorization", "value": "Bearer {{adminToken}}" }
+        ],
+        "url": "{{baseUrl}}/api/elections/{{electionId}}/status",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"status\": \"ACTIVE\"\n}"
+        }
+      }
+    },
+    {
+      "name": "5. Verify Fingerprint",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": "{{baseUrl}}/api/voters/verify",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"electionId\": \"{{electionId}}\",\n  \"fingerprintId\": 1,\n  \"deviceId\": \"device-esp32-01\"\n}"
+        }
+      }
+    },
+    {
+      "name": "6. Submit Vote",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": "{{baseUrl}}/api/votes",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"electionId\": \"{{electionId}}\",\n  \"candidateId\": 2,\n  \"votingSession\": \"{{votingSessionToken}}\",\n  \"requestId\": \"req-uuid-test-01\"\n}"
+        }
+      }
+    },
+    {
+      "name": "7. Get Election Results (Dashboard)",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }],
+        "url": "{{baseUrl}}/api/admin/dashboard/elections/{{electionId}}/results"
+      }
+    }
+  ]
+}
