@@ -28,7 +28,9 @@ export class AuthService {
       username: admin.username,
       role: admin.role,
     };
-    const accessToken = this.jwtService.sign(payload);
+    const accessToken = this.jwtService.sign(payload, {
+      secret: process.env.JWT_SECRET,
+    });
 
     return {
       success: true,

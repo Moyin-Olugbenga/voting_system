@@ -17,4 +17,9 @@ export class DashboardController {
   async getElectionResults(@Param('electionId') electionId: string) {
     return this.dashboardService.getElectionResults(electionId);
   }
+
+  @Get('elections/:electionId/ballots')
+  async getElectionBallots(@Param('electionId') electionId: string) {
+    return this.dashboardService.getElectionBallots(electionId);
+  }
 }

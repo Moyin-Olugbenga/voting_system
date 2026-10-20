@@ -106,4 +106,6 @@ export class ElectionsService {
       election: updated,
     };
   }
+
+  
 }

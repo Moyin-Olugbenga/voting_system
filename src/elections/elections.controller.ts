@@ -30,12 +30,15 @@ export class ElectionsController {
     return this.electionsService.addEligibleVoters(electionId, dto);
   }
 
-  @Patch(':electionId/status')
+  // Inside src/elections/elections.controller.ts
+  @Patch(':id/status')
   @UseGuards(JwtAuthGuard)
   async updateStatus(
-    @Param('electionId') electionId: string,
-    @Body('status') status: ElectionStatus,
+    @Param('id') id: string, 
+    @Body('status') status: 'DRAFT' | 'READY' | 'ACTIVE' | 'CLOSED'
   ) {
-    return this.electionsService.updateStatus(electionId, status);
+    return this.electionsService.updateStatus(id, status);
   }
+
+  
 }

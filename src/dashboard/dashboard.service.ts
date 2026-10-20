@@ -76,4 +76,35 @@ export class DashboardService {
       results,
     };
   }
+
+  // Add this method to DashboardService in src/dashboard/dashboard.service.ts
+  async getElectionBallots(electionId: string) {
+    const election = await this.prisma.election.findUnique({
+      where: { id: electionId },
+      include: { candidates: true },
+    });
+
+    if (!election) {
+      throw new NotFoundException({ success: false, message: 'Election not found' });
+    }
+
+    // Fetch ballots linked to candidates (anonymous audit trail)
+    const ballots = await this.prisma.ballot.findMany({
+      where: { electionId },
+      include: { candidate: { select: { name: true } } },
+      orderBy: { castAt: 'desc' },
+    });
+
+    return {
+      success: true,
+      electionId,
+      title: election.title,
+      totalBallots: ballots.length,
+      ballots: ballots.map((b, index) => ({
+        ballotNo: index + 1,
+        candidateName: b.candidateId,
+        castAt: b.castAt,
+      })),
+    };
+  }
 }

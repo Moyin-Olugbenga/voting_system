@@ -11,7 +11,12 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
 
   // Enable CORS for ESP32 and dashboard clients
-  app.enableCors();
+  app.enableCors({
+    origin: [
+      'http://localhost:3001',
+      'https://gallivon-client.onrender.com',
+    ],
+  });
 
   // Swagger Documentation Setup
   const config = new DocumentBuilder()

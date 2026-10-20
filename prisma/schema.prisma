@@ -41,7 +41,7 @@ model Voter {
   name          String
   fingerprintId Int
   deviceId      String
-  device        Device             @relation(fields: [deviceId], references: [id])
+  device        Device             @relation(fields: [deviceId], references: [id], onDelete: Cascade)
   createdAt     DateTime           @default(now())
   eligibility   VoterEligibility[]
   participation VoterParticipation[]
@@ -53,7 +53,7 @@ model Voter {
 model Election {
   id            String             @id @default(uuid())
   title         String
-  status        ElectionStatus     @default(DRAFT)
+  status        ElectionStatus     @default(ACTIVE)
   createdAt     DateTime           @default(now())
   candidates    Candidate[]
   eligibility   VoterEligibility[]
@@ -67,6 +67,7 @@ model Candidate {
   electionId  String
   election    Election @relation(fields: [electionId], references: [id], onDelete: Cascade)
   name        String
+  ballots     Ballot[]
 }
 
 model VoterEligibility {
@@ -100,13 +101,13 @@ model VoterParticipation {
 
   @@unique([electionId, voterId])
 }
-
 model Ballot {
-  id          String   @id @default(uuid())
+  id          String    @id @default(uuid())
   electionId  String
-  election    Election @relation(fields: [electionId], references: [id], onDelete: Cascade)
+  election    Election  @relation(fields: [electionId], references: [id], onDelete: Cascade)
   candidateId Int
-  castAt      DateTime @default(now())
+  candidate   Candidate @relation(fields: [candidateId], references: [id], onDelete: Cascade)
+  castAt      DateTime  @default(now())
 }
 
 model AuditLog {
