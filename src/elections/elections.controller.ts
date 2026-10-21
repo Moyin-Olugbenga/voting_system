@@ -16,6 +16,13 @@ export class ElectionsController {
     return this.electionsService.createElection(dto);
   }
 
+  @Get()
+  @UseGuards(JwtAuthGuard)
+  @HttpCode(HttpStatus.CREATED)
+  async getElections() {
+    return this.electionsService.getElections();
+  }
+
   @Get(':electionId/candidates')
   async getCandidates(@Param('electionId') electionId: string) {
     return this.electionsService.getCandidates(electionId);

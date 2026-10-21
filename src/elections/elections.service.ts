@@ -29,6 +29,17 @@ export class ElectionsService {
     };
   }
 
+    async getElections() {
+    const election = await this.prisma.election.findMany();
+
+    return {
+      success: true,
+      message: 'Election created successfully',
+      election,
+    };
+  }
+
+
   async getCandidates(electionId: string) {
     const election = await this.prisma.election.findUnique({
       where: { id: electionId },
