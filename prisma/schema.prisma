@@ -53,7 +53,7 @@ model Voter {
 model Election {
   id            String             @id @default(uuid())
   title         String
-  status        ElectionStatus     @default(ACTIVE)
+  status        ElectionStatus     @default(DRAFT)
   createdAt     DateTime           @default(now())
   candidates    Candidate[]
   eligibility   VoterEligibility[]

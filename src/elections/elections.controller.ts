@@ -28,7 +28,7 @@ export class ElectionsController {
     return this.electionsService.getCandidates(electionId);
   }
 
-  @Post(':electionId/eligibility')
+  @Post(':electionId/voters')
   @UseGuards(JwtAuthGuard)
   async addEligibleVoters(
     @Param('electionId') electionId: string,
@@ -37,7 +37,6 @@ export class ElectionsController {
     return this.electionsService.addEligibleVoters(electionId, dto);
   }
 
-  // Inside src/elections/elections.controller.ts
   @Patch(':id/status')
   @UseGuards(JwtAuthGuard)
   async updateStatus(
@@ -46,6 +45,5 @@ export class ElectionsController {
   ) {
     return this.electionsService.updateStatus(id, status);
   }
-
-  
+   
 }
