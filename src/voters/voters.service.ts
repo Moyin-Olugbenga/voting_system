@@ -68,4 +68,16 @@ export class VotersService {
       },
     };
   }
+
+async getAllVoters() {
+  const voters = await this.prisma.voter.findMany({
+    orderBy: { createdAt: 'desc' },
+  });
+
+  return {
+    success: true,
+    voters,
+  };
+}
+
 }
