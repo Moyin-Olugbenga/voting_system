@@ -4,7 +4,7 @@ import { VotersService } from './voters.service';
 import { RegisterVoterDto } from './dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
-@Controller('voters') // Clean prefix to match global setup
+@Controller('api/voters') 
 @UseGuards(JwtAuthGuard)
 export class VotersController {
   constructor(private readonly votersService: VotersService) {}
