@@ -118,7 +118,82 @@ export class ElectionsService {
     };
   }
 
+async getElectionResults(electionId: string) {
+  const election = await this.prisma.election.findUnique({
+    where: { id: electionId },
+    include: {
+      candidates: true,
+      eligibility: true,
+      ballots: true,
+    },
+  });
+
+  if (!election) {
+    throw new NotFoundException('Election not found');
+  }
+
+  // Count votes per candidate
+  const results = election.candidates.map((candidate) => {
+    const voteCount = election.ballots.filter((b) => b.candidateId === candidate.id).length;
+    return {
+      candidateId: candidate.id,
+      name: candidate.name,
+      voteCount,
+    };
+  });
+
+  // Sort candidates by vote count descending to find the winner
+  results.sort((a, b) => b.voteCount - a.voteCount);
   
+  const totalVotes = election.ballots.length;
+  const totalEligible = election.eligibility.length;
+  const turnoutPercentage = totalEligible > 0 ? ((totalVotes / totalEligible) * 100).toFixed(1) : '0';
+
+  // Determine winner if election is closed or active
+  let winner = null;
+  if (results.length > 0 && results[0].voteCount > 0) {
+    // Check for a tie
+    if (results.length > 1 && results[0].voteCount === results[1].voteCount) {
+      winner = { name: 'It is a tie!', voteCount: results[0].voteCount };
+    } else {
+      winner = results[0];
+    }
+  }
+
+  return {
+    success: true,
+    title: election.title,
+    status: election.status,
+    totalVotes,
+    totalEligible,
+    turnoutPercentage,
+    winner,
+    results,
+  };
+}
+
+async getElectionBallots(electionId: string) {
+  const ballots = await this.prisma.ballot.findMany({
+    where: { electionId },
+    include: {
+      candidate: true,
+    },
+    orderBy: { castAt: 'desc' },
+  });
+
+  // Map to a clean audit log structure preserving ballot anonymity
+  const formattedBallots = ballots.map((b, index) => ({
+    ballotNo: ballots.length - index, // Generates sequential anonymous receipt numbers
+    candidateName: b.candidate.name,
+    castAt: b.castAt,
+  }));
+
+  return {
+    success: true,
+    ballots: formattedBallots,
+  };
+}
+
 
   
 }
