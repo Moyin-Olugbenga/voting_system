@@ -30,12 +30,12 @@ export class ElectionsService {
   }
 
     async getElections() {
-    const election = await this.prisma.election.findMany();
+    const elections = await this.prisma.election.findMany();
 
     return {
       success: true,
-      message: 'Election created successfully',
-      election,
+      message: 'Election gotten successfully',
+      elections,
     };
   }
 
