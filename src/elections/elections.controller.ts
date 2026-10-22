@@ -45,5 +45,17 @@ export class ElectionsController {
   ) {
     return this.electionsService.updateStatus(id, status);
   }
+  @Get(':id/results')
+@UseGuards(JwtAuthGuard)
+async getElectionResults(@Param('id') id: string) {
+  return this.electionsService.getElectionResults(id);
+}
+
+@Get(':id/ballots')
+@UseGuards(JwtAuthGuard)
+async getElectionBallots(@Param('id') id: string) {
+  return this.electionsService.getElectionBallots(id);
+}
+
    
 }
