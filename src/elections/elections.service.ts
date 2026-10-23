@@ -150,7 +150,7 @@ async getElectionResults(electionId: string) {
   const turnoutPercentage = totalEligible > 0 ? ((totalVotes / totalEligible) * 100).toFixed(1) : '0';
 
   // Determine winner if election is closed or active
-  let winner = null;
+  let winner;
   if (results.length > 0 && results[0].voteCount > 0) {
     // Check for a tie
     if (results.length > 1 && results[0].voteCount === results[1].voteCount) {
